@@ -5,9 +5,15 @@ import React,{ useState, useEffect } from 'react'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import Link from 'next/link'
+interface PokemonType {
+  id: number
+  image: string
+  name: string
+}
 
 export default function Home() {
-  const [pokemon, setPokemon] = useState([])
+  
+  const [pokemon, setPokemon] = useState<PokemonType[]>([])
 
   useEffect(() => {
   async function getPokemon() {
