@@ -6,13 +6,23 @@ import Head from 'next/head'
 import styles from '../../styles/Details.module.css'
 import Link from 'next/link'
 
-export default function Details() {
+// SSR
+export async function getServerSideProps({ params }){
+    const resp = await fetch(`https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params.id}.json`)
+    return {
+        props: {
+            pokemon: await resp.json(),
+        }
+    }
+}
+
+export default function Details({ pokemon }) {
+    
+    /* CSR
     const {
         query:{id},
     } = useRouter();
-
     const [pokemon, setPokemon] = useState(null)
-
     useEffect(() => {
         async function getPokemon() {
           const resp = await fetch(`https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${id}.json`)
@@ -25,7 +35,7 @@ export default function Details() {
         if(!pokemon){
             return null
         }
-
+    */
     return (
     <div>
         <Head>

@@ -1,7 +1,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 // 以上為一個可以讓eslint消失的註解
-import React,{ useState, useEffect } from 'react'
+import React from 'react'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import Link from 'next/link'
@@ -11,8 +11,26 @@ interface PokemonType {
   name: string
 }
 
-export default function Home() {
+//SSR
+export async function getServerSideProps() {
+  const resp = await fetch("https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json")
+  // console.log('pokemon的結果',resp)
+  const pokemons = await resp.json()
+  // console.log('pokemons getServerSideProps',pokemons)
+
+  return {
+    props:{
+      pokemons
+    }
+  }
   
+}
+
+export default function Home(props:any) {  
+  // console.log('pokemon function',pokemons)
+  const pokemons:PokemonType[] = props.pokemons
+  /*
+  // CSR
   const [pokemon, setPokemon] = useState<PokemonType[]>([])
 
   useEffect(() => {
@@ -22,7 +40,7 @@ export default function Home() {
     }
     getPokemon()
   }, [])
-  
+  */
 
   return (
     <div className={styles.container}>
@@ -31,21 +49,20 @@ export default function Home() {
       </Head>
       <h2>Pokemon List</h2>
       <div className={styles.grid}>
-        {pokemon.map((pokemon)=>(
+        {pokemons.map((pokemon)=>(
           <div className={styles.card} key={pokemon.id}>
             <Link href={`/pokemon/${pokemon.id}`}>
               <a>
                 <img src={`https://jherr-pokemon.s3.us-west-1.amazonaws.com/${pokemon.image}`}
                 alt={pokemon.name}
                 />
-              </a>
               <h3>{pokemon.name}</h3>
+              </a>
             </Link>
           </div>
         ))}
-
       </div>
-      <div>{JSON.stringify(pokemon)}</div>
+      <div>{JSON.stringify(pokemons)}</div>
     </div>
   )
 }
