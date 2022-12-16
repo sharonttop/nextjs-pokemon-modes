@@ -5,8 +5,31 @@ import React,{ useState, useEffect } from 'react'
 import Head from 'next/head'
 import styles from '../../styles/Details.module.css'
 import Link from 'next/link'
+//SSG
+export async function getStaticPaths(){
+    const resp = await fetch("https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json")
+    const pokemon = await resp.json()
 
-// SSR
+    return {
+        paths: pokemon.map((pokemon)=>({
+            params:{id: pokemon.id.toString()},
+        })),
+        fallback: false,
+    }
+
+}
+
+export async function getStaticProps({ params }){
+    const resp = await fetch(`https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params.id}.json`)
+    return {
+        props: {
+            pokemon: await resp.json(),
+        }
+    }
+}
+
+
+/* SSR
 export async function getServerSideProps({ params }){
     const resp = await fetch(`https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params.id}.json`)
     return {
@@ -15,6 +38,7 @@ export async function getServerSideProps({ params }){
         }
     }
 }
+*/
 
 export default function Details({ pokemon }) {
     
