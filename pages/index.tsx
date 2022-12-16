@@ -5,6 +5,7 @@ import React from 'react'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import Link from 'next/link'
+import { GetServerSideProps } from "next";
 interface PokemonType {
   id: number
   image: string
@@ -12,23 +13,22 @@ interface PokemonType {
 }
 
 //SSR
-export async function getServerSideProps() {
-  const resp = await fetch("https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json")
-  // console.log('pokemon的結果',resp)
-  const pokemons = await resp.json()
-  // console.log('pokemons getServerSideProps',pokemons)
-
+export const getServerSideProps: GetServerSideProps = async () => {
+  const res = await fetch("https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json")
+  const pokemons:PokemonType[] = await res.json()
   return {
-    props:{
-      pokemons
-    }
-  }
-  
+    props: {
+      pokemons,
+    },
+  };
+};
+interface HomeProps {
+  pokemons: PokemonType[];
 }
 
-export default function Home(props:any) {  
-  // console.log('pokemon function',pokemons)
-  const pokemons:PokemonType[] = props.pokemons
+
+export default function Home({pokemons}:HomeProps) {  
+
   /*
   // CSR
   const [pokemon, setPokemon] = useState<PokemonType[]>([])
